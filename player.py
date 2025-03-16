@@ -19,6 +19,15 @@ class Player:
         self.alive = False
 
 
-minsung = Player(name="구민성")
-kloud = Player(name="구름", age=45)
-
+p1 = Player(name="철수", mbti="enfj")
+p2 = Player(name="영희", gender="woman")
+p3 = Player(name="영수", mbti="intp")
+p4 = Player(name="영철", mbti="estj")
+p5 = Player(name="영호", mbti="infp")
+p6 = Player(name="옥순", gender="woman", mbti="entj")
+p7 = Player(name="영자", gender="woman", mbti="esfp")
+p8 = Player(name="남수")
+p9 = Player(name="경수", mbti="isfj")
+p10 = Player(name="유리", gender="woman", mbti="enfp")
+p11 = Player(name="정숙", gender="woman", mbti="istj")
+p12 = Player(name="짱구", mbti="enfp")
