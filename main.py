@@ -5,7 +5,9 @@ from player import Player
 def assign_roles(players):
     # 직업 목록 정의
     mafia_jobs = ["스파이", "도둑", "과학자", "마담"]
-    citizen_jobs = ["경찰", "요원", "의사", "정치인", "테러리스트", "군인", "건달", "간호사", "시민"]
+    police_jobs = ["경찰", "요원"]
+    police_job_choice = random.sample(police_jobs, 1)
+    citizen_jobs = [police_job_choice[0], "의사", "정치인", "테러리스트", "군인", "건달", "간호사", "시민"]
 
     # 마피아 팀 4명 선정
     mafia_team = random.sample(players, 4)
