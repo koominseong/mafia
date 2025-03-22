@@ -15,8 +15,15 @@ class Player:
 
     def get_prompt_charactor(self):
         return f"""
+    Information from the real world of the player:
         Name : {self.name}
-        Age : {self.age}"""
+        Age : {self.age}
+        Gender : {self.gender}
+        mbti : {self.mbti}
+        real_job : {self.real_job}
+    
+    Information in the game of the player:
+        job : {self.job}"""
 
     def speak(self):
         pass
