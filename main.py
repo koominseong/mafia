@@ -122,3 +122,86 @@ def conversation_loop(players):
     print("\n[대화 종료] 전체 대화 로그:")
     for entry in chat_log:
         print(f"{entry['speaker'].name}: {entry['content']}")
+
+#투표
+def voting_phase(players):
+    alive_players = [p for p in players if p.alive]
+    vote_count = {p: 0 for p in alive_players}
+    null_votes = 0  # 무효표 수
+
+    print("\n [익명 투표 시작] 생존자 명단:")
+    for idx, p in enumerate(alive_players):
+        print(f"{idx + 1}. {p.name}")
+
+    # 🔸 일반 투표 (본인 포함, 시간 제한 있음)
+    for voter in alive_players:
+        print(f"\n{voter.name}님, 투표할 대상을 선택하세요 (15초 내 입력):")
+        for idx, c in enumerate(alive_players):
+            print(f"{idx + 1}. {c.name}")
+
+        try:
+            choice = int(inputimeout(prompt="번호 입력: ", timeout=15)) - 1
+            selected = alive_players[choice]
+            vote_count[selected] += 1
+            print("✅ 투표가 완료되었습니다.")
+        except (TimeoutOccurred, ValueError, IndexError):
+            null_votes += 1
+            print("❌ 투표 시간 초과 또는 잘못된 입력! 무효표 처리됩니다.")
+
+    # 📊 득표 결과 출력
+    print("\n📊 [투표 결과 요약]")
+    for p, count in vote_count.items():
+        print(f"{p.name}: {count}표")
+    print(f"무효표: {null_votes}표")
+
+    max_votes = max(vote_count.values(), default=0)
+    top_candidates = [p for p, count in vote_count.items() if count == max_votes]
+
+    if len(top_candidates) == 1 and max_votes > 0:
+        target = top_candidates[0]
+        print(f"\n☝️ 최다 득표자: {target.name} ({max_votes}표)")
+
+        # 🗣️ 최후의 변론 시간
+        try:
+            print(f"\n🗣️ {target.name}의 최후의 변론 (15초 내 입력):")
+            defense = inputimeout(prompt="> ", timeout=15)
+        except TimeoutOccurred:
+            defense = "...(시간 초과)"
+
+        print(f"📝 {target.name}의 발언: {defense}")
+
+        # 👍 익명 찬반 투표
+        print("\n👍 익명 찬반 투표를 시작합니다 (찬성: 처형 / 반대: 생존, 10초 내 입력)")
+        agree_count = 0
+        disagree_count = 0
+        vote_total = 0
+
+        for _ in alive_players:
+            try:
+                vote = inputimeout(prompt="투표 (y: 찬성 / n: 반대): ", timeout=10).strip().lower()
+                if vote == 'y':
+                    agree_count += 1
+                elif vote == 'n':
+                    disagree_count += 1
+                else:
+                    print("잘못된 입력 - 무효 처리")
+                vote_total += 1
+            except TimeoutOccurred:
+                print("시간 초과 - 무효 처리")
+
+        print(f"\n📊 찬반 투표 결과 (익명): 찬성 {agree_count} / 반대 {disagree_count}")
+
+        if agree_count > disagree_count:
+            target.die()
+            print(f"\n☠️ {target.name}가 최종 처형되었습니다.")
+        else:
+            print(f"\n🙅‍♂️ {target.name}는 살아남았습니다.")
+
+    else:
+        print("\n⚠️ 동점자 발생 또는 유효표 없음! 아무도 처형되지 않습니다.")
+
+    # ✅ 최종 상태 출력
+    print("\n✅ [현재 생존 상태]")
+    for p in players:
+        status = "🟢 생존" if p.alive else "⚫ 사망"
+        print(f"- {p.name}: {status}")
