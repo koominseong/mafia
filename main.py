@@ -28,6 +28,10 @@ def assign_roles(players):
         player.job = job
 
 
+
+player_name = input("플레이어 이름을 입력하세요 :")
+
+
 players = [
         Player(name="철수", mbti="enfj"),
         Player(name="영희", gender="woman"),
@@ -40,12 +44,14 @@ players = [
         Player(name="경수", mbti="isfj"),
         Player(name="유리", gender="woman", mbti="enfp"),
         Player(name="정숙", gender="woman", mbti="istj"),
-        Player(name="짱구", mbti="enfp")
+        Player(name="player_name", is_player = True)
     ]
-
-# 역할 배정
+"""==================== 게임 시작 ===================="""
+# 직업 부여
 assign_roles(players)
 
 # 결과 출력
 for player in players:
     print(f"{player.name} - {player.job}")
+
+
