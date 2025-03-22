@@ -103,6 +103,7 @@ PLAYER INFO :
 
 GAME RULES :
 
+
 Remaining players :
 {[p.name for p in players if p.alive]}
 

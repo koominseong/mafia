@@ -13,6 +13,11 @@ class Player:
         self.job = None #마피아 직업
         self.alive = True #생존 여부
 
+    def get_prompt_charactor(self):
+        return f"""
+        Name : {self.name}
+        Age : {self.age}"""
+
     def speak(self):
         pass
 
