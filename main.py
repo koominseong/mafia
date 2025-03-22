@@ -1,5 +1,7 @@
 import random
 from player import Player
+import env_set
+import chat_ai
 
 
 def assign_roles(players):
@@ -50,9 +52,13 @@ players = [
 # 직업 부여
 assign_roles(players)
 
+
+
 # 결과 출력
 for player in players:
-    print(f"{player.name} - {player.job}")
+    print(f"{player.name} - {chat_ai.chat_withGPT(player, "", players)}")
+
+
 
 #대화
 import random

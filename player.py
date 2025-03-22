@@ -12,6 +12,7 @@ class Player:
         #마피아 게임 관련 속성
         self.job = None #마피아 직업
         self.alive = True #생존 여부
+        self.prediction = "" #마지막 예측
 
     def get_prompt_charactor(self):
         return f"""
@@ -24,6 +25,13 @@ class Player:
     
     Information in the game of the player:
         job : {self.job}"""
+
+    def get_last_prediction(self):
+        return self.prediction
+
+    def set_last_prediction(self, prediction):
+        self.prediction = prediction
+        return
 
     def speak(self):
         pass

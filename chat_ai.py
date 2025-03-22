@@ -1,11 +1,8 @@
 import os
-# 플라스크 라이브러리 api 서버용
-from flask import Flask, request, make_response, Response, jsonify
 # 크로스도메인 문제 해결 라이브러리 (웹서버와 포트나 도메인이 다르기 때문에 필요)
-from flask_cors import CORS
 from openai import OpenAI
 from langchain_openai import ChatOpenAI  # chatgpt 연결 클래스
-from langchain.memory import ChatMessageHistory  # 버퍼에 데이터 넣기
+# from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage  # 프롬프트 생성용 클래스
 from langchain.output_parsers import PydanticOutputParser  # 출력 형태 고정하기 위해 활용
 from pydantic import BaseModel, Field, validator  # 최신 Pydantic v2를 직접 사용
@@ -14,7 +11,6 @@ from typing import Literal  # Literal 임포트
 import tiktoken
 from datetime import datetime
 import json
-
 
 
 GPT_MODEL = 'gpt-4o'
@@ -118,19 +114,16 @@ CHAT HISTORY: :
 
 
     chatml = [SystemMessage(content=SYS_PROMPT)] \
-            + SystemMessage(content=output_parser.get_format_instructions())
+            + [SystemMessage(content=output_parser.get_format_instructions())]
 
 
-    result = chatGPT.stream(chatml)
+    result = chatGPT.invoke(chatml)
 
-    chunks = ""
+    return result
+    # # JSON 파싱 후 반환
+    # try:
+    #     return json.loads(result)  # response_text → chunks 로 변경
+    # except json.JSONDecodeError:
+    #     return None  # JSON 변환 실패 시 None 반환
 
-    for chunk in result:
-        chunks += chunk.content
-        yield chunk.content
 
-    # JSON 파싱 후 반환
-    try:
-        return json.loads(chunks)  # response_text → chunks 로 변경
-    except json.JSONDecodeError:
-        return None  # JSON 변환 실패 시 None 반환
