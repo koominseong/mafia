@@ -56,7 +56,7 @@ assign_roles(players)
 
 # 결과 출력
 for player in players:
-    print(f"{player.name} - {chat_ai.chat_withGPT(player, "", players)}")
+    print(f"{player.name}({player.job}) : {chat_ai.chat_withGPT(player, "", players)}")
 
 
 
