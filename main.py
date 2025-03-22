@@ -124,18 +124,98 @@ def conversation_loop(players):
         print(f"{entry['speaker'].name}: {entry['content']}")
 
 #투표
-def voting_phase(players):
+# def voting_phase(players):
+#     alive_players = [p for p in players if p.alive]
+#     vote_count = {p: 0 for p in alive_players}
+#     null_votes = 0  # 무효표 수
+#
+#     print("\n [익명 투표 시작] 생존자 명단:")
+#     for idx, p in enumerate(alive_players):
+#         print(f"{idx + 1}. {p.name}")
+#
+#     # 🔸 일반 투표 (본인 포함, 시간 제한 있음)
+#     for voter in alive_players:
+#         print(f"\n{voter.name}님, 투표할 대상을 선택하세요 (15초 내 입력):")
+#         for idx, c in enumerate(alive_players):
+#             print(f"{idx + 1}. {c.name}")
+#
+#         try:
+#             choice = int(inputimeout(prompt="번호 입력: ", timeout=15)) - 1
+#             selected = alive_players[choice]
+#             vote_count[selected] += 1
+#             print("✅ 투표가 완료되었습니다.")
+#         except (TimeoutOccurred, ValueError, IndexError):
+#             null_votes += 1
+#             print("❌ 투표 시간 초과 또는 잘못된 입력! 무효표 처리됩니다.")
+#
+#     # 📊 득표 결과 출력
+#     print("\n📊 [투표 결과 요약]")
+#     for p, count in vote_count.items():
+#         print(f"{p.name}: {count}표")
+#     print(f"무효표: {null_votes}표")
+#
+#     max_votes = max(vote_count.values(), default=0)
+#     top_candidates = [p for p, count in vote_count.items() if count == max_votes]
+#
+#     if len(top_candidates) == 1 and max_votes > 0:
+#         target = top_candidates[0]
+#         print(f"\n☝️ 최다 득표자: {target.name} ({max_votes}표)")
+#
+#         # 🗣️ 최후의 변론 시간
+#         try:
+#             print(f"\n🗣️ {target.name}의 최후의 변론 (15초 내 입력):")
+#             defense = inputimeout(prompt="> ", timeout=15)
+#         except TimeoutOccurred:
+#             defense = "...(시간 초과)"
+#
+#         print(f"📝 {target.name}의 발언: {defense}")
+#
+#         # 👍 익명 찬반 투표
+#         print("\n👍 익명 찬반 투표를 시작합니다 (찬성: 처형 / 반대: 생존, 10초 내 입력)")
+#         agree_count = 0
+#         disagree_count = 0
+#         vote_total = 0
+#
+#         for _ in alive_players:
+#             try:
+#                 vote = inputimeout(prompt="투표 (y: 찬성 / n: 반대): ", timeout=10).strip().lower()
+#                 if vote == 'y':
+#                     agree_count += 1
+#                 elif vote == 'n':
+#                     disagree_count += 1
+#                 else:
+#                     print("잘못된 입력 - 무효 처리")
+#                 vote_total += 1
+#             except TimeoutOccurred:
+#                 print("시간 초과 - 무효 처리")
+#
+#         print(f"\n📊 찬반 투표 결과 (익명): 찬성 {agree_count} / 반대 {disagree_count}")
+#
+#         if agree_count > disagree_count:
+#             target.die()
+#             print(f"\n☠️ {target.name}가 최종 처형되었습니다.")
+#         else:
+#             print(f"\n🙅‍♂️ {target.name}는 살아남았습니다.")
+#
+#     else:
+#         print("\n⚠️ 동점자 발생 또는 유효표 없음! 아무도 처형되지 않습니다.")
+#
+#     # ✅ 최종 상태 출력
+#     print("\n✅ [현재 생존 상태]")
+#     for p in players:
+#         status = "🟢 생존" if p.alive else "⚫ 사망"
+#         print(f"- {p.name}: {status}")
+def voting_phase(players, round_number, vote_log):
     alive_players = [p for p in players if p.alive]
     vote_count = {p: 0 for p in alive_players}
-    null_votes = 0  # 무효표 수
+    null_votes = 0
 
-    print("\n [익명 투표 시작] 생존자 명단:")
+    print("\n🗳️ [익명 투표 시작] 생존자 명단:")
     for idx, p in enumerate(alive_players):
         print(f"{idx + 1}. {p.name}")
 
-    # 🔸 일반 투표 (본인 포함, 시간 제한 있음)
     for voter in alive_players:
-        print(f"\n{voter.name}님, 투표할 대상을 선택하세요 (15초 내 입력):")
+        print(f"\n{voter.name}님, 투표할 대상을 선택하세요 (15초):")
         for idx, c in enumerate(alive_players):
             print(f"{idx + 1}. {c.name}")
 
@@ -143,12 +223,23 @@ def voting_phase(players):
             choice = int(inputimeout(prompt="번호 입력: ", timeout=15)) - 1
             selected = alive_players[choice]
             vote_count[selected] += 1
-            print("✅ 투표가 완료되었습니다.")
+            vote_log.append({
+                "round": round_number,
+                "voter": voter.name,
+                "target": selected.name,
+                "result": "valid"
+            })
+            print("✅ 투표 완료.")
         except (TimeoutOccurred, ValueError, IndexError):
             null_votes += 1
-            print("❌ 투표 시간 초과 또는 잘못된 입력! 무효표 처리됩니다.")
+            vote_log.append({
+                "round": round_number,
+                "voter": voter.name,
+                "target": None,
+                "result": "invalid"
+            })
+            print("❌ 무효표 처리.")
 
-    # 📊 득표 결과 출력
     print("\n📊 [투표 결과 요약]")
     for p, count in vote_count.items():
         print(f"{p.name}: {count}표")
@@ -161,47 +252,85 @@ def voting_phase(players):
         target = top_candidates[0]
         print(f"\n☝️ 최다 득표자: {target.name} ({max_votes}표)")
 
-        # 🗣️ 최후의 변론 시간
         try:
-            print(f"\n🗣️ {target.name}의 최후의 변론 (15초 내 입력):")
+            print(f"\n🗣️ {target.name} 최후 변론 (15초):")
             defense = inputimeout(prompt="> ", timeout=15)
         except TimeoutOccurred:
             defense = "...(시간 초과)"
+        print(f"📝 발언: {defense}")
 
-        print(f"📝 {target.name}의 발언: {defense}")
-
-        # 👍 익명 찬반 투표
-        print("\n👍 익명 찬반 투표를 시작합니다 (찬성: 처형 / 반대: 생존, 10초 내 입력)")
-        agree_count = 0
-        disagree_count = 0
-        vote_total = 0
-
+        print("\n👍 익명 찬반 투표 (10초 내 y/n 입력)")
+        agree = 0
+        disagree = 0
         for _ in alive_players:
             try:
-                vote = inputimeout(prompt="투표 (y: 찬성 / n: 반대): ", timeout=10).strip().lower()
+                vote = inputimeout(prompt="찬성(y) / 반대(n): ", timeout=10).strip().lower()
                 if vote == 'y':
-                    agree_count += 1
+                    agree += 1
                 elif vote == 'n':
-                    disagree_count += 1
-                else:
-                    print("잘못된 입력 - 무효 처리")
-                vote_total += 1
+                    disagree += 1
             except TimeoutOccurred:
-                print("시간 초과 - 무효 처리")
+                continue
 
-        print(f"\n📊 찬반 투표 결과 (익명): 찬성 {agree_count} / 반대 {disagree_count}")
-
-        if agree_count > disagree_count:
+        print(f"\n📊 찬성: {agree} / 반대: {disagree}")
+        if agree > disagree:
             target.die()
-            print(f"\n☠️ {target.name}가 최종 처형되었습니다.")
+            print(f"☠️ {target.name} 처형됨")
         else:
-            print(f"\n🙅‍♂️ {target.name}는 살아남았습니다.")
-
+            print(f"🙅 {target.name} 생존")
     else:
-        print("\n⚠️ 동점자 발생 또는 유효표 없음! 아무도 처형되지 않습니다.")
+        print("⚠️ 동점 또는 유효표 없음 → 아무도 처형되지 않음")
 
-    # ✅ 최종 상태 출력
-    print("\n✅ [현재 생존 상태]")
+    print("\n✅ 생존 상태:")
     for p in players:
         status = "🟢 생존" if p.alive else "⚫ 사망"
         print(f"- {p.name}: {status}")
+
+
+#게임 종료
+def is_game_over(players):
+    mafia_count = sum(1 for p in players if p.alive and (p.job == "마피아" or p.job in ["스파이", "도둑", "과학자", "마담"]))
+    citizen_count = sum(1 for p in players if p.alive and mafia_count == 0 or p.job not in ["마피아", "스파이", "도둑", "과학자", "마담"])
+    if mafia_count == 0:
+        print("\n 시민 팀이 마피아를 모두 제거했습니다! 시민 승리!")
+        return True
+    elif mafia_count >= citizen_count:
+        print("\n 마피아 팀이 시민 수를 넘었습니다! 마피아 승리!")
+        return True
+    return False
+
+#낮/밤 루프
+# 낮 Phase
+def day_phase(players):
+    print("\n🌞 [낮 시간] 대화와 투표가 시작됩니다.")
+    alive_players = [p for p in players if p.alive]
+    conversation_loop(alive_players)  # 대화 먼저
+    voting_phase(players)  # 그 다음 투표
+
+# 밤 Phase (기본 템플릿, 실제 역할 기능은 추후 추가)
+def night_phase(players):
+    print("\n🌙 [밤 시간] 역할들이 능력을 사용할 수 있습니다.")
+    print("(※ 현재는 기능 미구현 상태입니다. 이후 마피아 공격, 경찰 조사, 의사 치료 등을 추가할 수 있어요.)\n")
+    # 예: 밤 사이 랜덤으로 마피아가 한 명 제거하는 로직을 여기에 넣을 수 있음.
+    pass
+
+# 전체 게임 루프
+def game_loop(players):
+    round_number = 1
+    while True:
+        print(f"\n🌗 [라운드 {round_number} 시작] -----------------------------")
+
+        # 낮 시간
+        day_phase(players)
+        if is_game_over(players):
+            break
+
+        # 밤 시간
+        night_phase(players)
+        if is_game_over(players):
+            break
+
+        round_number += 1
+
+
+game_loop(players)
