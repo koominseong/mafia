@@ -133,7 +133,7 @@ def conversation_loop(players):
             choice = int(input("번호 입력: ")) - 1
             # try:
             #     # choice = int(inputimeout(prompt="번호 입력: ", timeout=5)) - 1
-            #     next_speaker = possible_targets[choice]
+            next_speaker = possible_targets[choice]
             # except (TimeoutOccurred, ValueError, IndexError):
             #     next_speaker = random.choice(possible_targets)
             #     print(f"시간 초과 또는 잘못된 입력! 랜덤으로 {next_speaker.name} 지목됨.\n")
