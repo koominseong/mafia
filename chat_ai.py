@@ -11,7 +11,7 @@ from typing import Literal  # Literal 임포트
 import tiktoken
 from datetime import datetime
 import json
-
+import re
 
 GPT_MODEL = 'gpt-4o'
 
@@ -81,12 +81,12 @@ class Response_Type(BaseModel):
     Speaker: str = Field(description="The speaker of the message")
     chat: str = Field(description="That player's conversation")
     predictions : str = Field(description="My predictions for each player's class based on conversations to date")
-    point: str = Field(description="""Players who want to hear the next story""")
+    point: str = Field(description="""Players who want to hear the next story only from possible player except own""")
 
 
-def chat_withGPT(player, chat_history, players, chat_max_token_limit=65536):
-    while num_tokens_from_messages(str(chat_history), model=GPT_MODEL) > chat_max_token_limit:
-        chat_history.pop(0)
+def chat_withGPT(player, chat_history, players, possible_targets, chat_max_token_limit=65536):
+    # while num_tokens_from_messages(str(chat_history), model=GPT_MODEL) > chat_max_token_limit:
+    #     chat_history.pop(0)
 
     SYS_PROMPT = f"""An AI chatbot that participated in a game of mafia.
 Determine your conversational personality and tone of voice based on your player information.
@@ -97,11 +97,16 @@ After answering, be sure to ask one of the remaining players to continue the con
 PLAYER INFO :
 {player.get_prompt_charactor()}
 
-GAME RULES :
+GAME RULES : 
+The most important rule is to catch the mafia
+Citizens must catch the mafia, while not getting killed by mafia. If the citizens say their jobs,
 
 
 Remaining players :
 {[p.name for p in players if p.alive]}
+
+Conversation Posssible Players:
+{[p.name for p in possible_targets if p.alive]}
 
 PREV PREDICTION :
 {player.get_last_prediction()}
@@ -119,7 +124,30 @@ CHAT HISTORY: :
 
     result = chatGPT.invoke(chatml)
 
-    return result
+
+
+
+    match = re.search(r'\{.*\}', result.content, re.DOTALL)
+    if match:
+        json_str = match.group(0)
+        parsed = json.loads(json_str)
+    else :
+        parsed = {"speaker": "", "chat" : "", "predictions" : "", "point" : ""}
+    # print(parsed)
+    # try:
+    #     result = json.loads(result.content)
+    # except Exception:
+    #     result = None
+
+
+    return parsed
+    #
+    # print(result)
+    # try:
+    #     ret = json.loads(result.content)
+    # except json.decoder.JSONDecodeError:
+    #     ret = {"speaker": "", "chat" : "", "predictions" : "", "point" : ""}
+    # return ret
     # # JSON 파싱 후 반환
     # try:
     #     return json.loads(result)  # response_text → chunks 로 변경
