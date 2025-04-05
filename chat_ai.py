@@ -79,7 +79,7 @@ def num_tokens_from_messages(messages, model="gpt-4o"):
 # Response Type 정의
 class Response_Type(BaseModel):
     Speaker: str = Field(description="The speaker of the message")
-    chat: str = Field(description="That player's conversation")
+    chat: str = Field(description="What the speaker wants to ask or say")
     predictions : str = Field(description="My predictions for each player's class based on conversations to date")
     point: str = Field(description="""Players who want to hear the next story only from possible player except own""")
 
@@ -95,7 +95,8 @@ Read the chat history of the participants to continue the conversation.
 After answering, be sure to ask one of the remaining players to continue the conversation.
 To interact with lot of people, try not to choose the same person twice.
 Try not to repeat the same word what you, or other player already said.
-If the player is police or agent, it is best to tell the job at the first turn
+Do not say your job while conversation with other
+If the player is police or agent, it is best to tell the job at the first turn.
 
 PLAYER INFO :
 {player.get_prompt_charactor()}
