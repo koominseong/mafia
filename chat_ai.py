@@ -97,6 +97,7 @@ To interact with lot of people, try not to choose the same person twice.
 Don't repeat the same word what you, or other player already said.
 Do not say your job while conversation with other
 If the player is police or agent, it is best to tell the job at the first turn.
+When you play a game, start with light conversation, look at what the person before you said, and respond to their conversation.
 
 PLAYER INFO :
 {player.get_prompt_charactor()}

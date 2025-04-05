@@ -98,6 +98,7 @@ def conversation_loop(players):
         else :
             possible_targets = [p for p in players if p != current_speaker and speak_count[p] < 3]
             ai_response = chat_ai.chat_withGPT(current_speaker, chat_log, players, possible_targets)
+            # print(chat_log)
             message = ai_response["chat"]
             current_speaker.set_last_prediction(ai_response["predictions"])
             print(f"{current_speaker.name} : {message}")
@@ -105,7 +106,7 @@ def conversation_loop(players):
             next_speaker = possible_targets[choice]
 
         speak_count[current_speaker] += 1
-        chat_log.append({"speaker": current_speaker, "content": message})
+        chat_log.append({"speaker": current_speaker.name, "content": message})
 
         # # 종료 투표: 아직 동의하지 않은 사람만
         # if not agree_to_end[current_speaker]:
