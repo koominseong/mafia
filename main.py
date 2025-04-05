@@ -53,6 +53,10 @@ players = [
 assign_roles(players)
 
 
+# 사용자 직업 출력
+for p in players:
+    if getattr(p, "is_player", False):
+        print(f"{p.name}님의 직업은 {p.job}입니다.")
 
 # # 결과 출력
 # for player in players:
@@ -96,7 +100,7 @@ def conversation_loop(players):
             ai_response = chat_ai.chat_withGPT(current_speaker, chat_log, players, possible_targets)
             message = ai_response["chat"]
             current_speaker.set_last_prediction(ai_response["predictions"])
-            print(message)
+            print(f"{current_speaker.name} : {message}")
             choice = next((i for i, d in enumerate(possible_targets) if d.name == ai_response["point"]), -1)
             next_speaker = possible_targets[choice]
 
