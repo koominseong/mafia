@@ -94,7 +94,7 @@ Refer to the game rules and act according to the game role assigned to you.
 Read the chat history of the participants to continue the conversation.
 After answering, be sure to ask one of the remaining players to continue the conversation.
 To interact with lot of people, try not to choose the same person twice.
-Try not to repeat the same word what you, or other player already said.
+Don't repeat the same word what you, or other player already said.
 Do not say your job while conversation with other
 If the player is police or agent, it is best to tell the job at the first turn.
 
